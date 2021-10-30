@@ -5,6 +5,11 @@ import { Header } from '../components/Header';
 import { Task, TasksList } from '../components/TasksList';
 import { TodoInput } from '../components/TodoInput';
 
+export type EditTaskArgs = {
+  taskId: number;
+  taskNewTitle: string;
+};
+
 export function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -38,11 +43,19 @@ export function Home() {
     Alert.alert(
       'Remover item',
       'Tem certeza que você deseja remover esse item?',
-      [
-        { text: 'Sim', onPress: () => handleRemoveTask(id) },
-        { text: 'Não', onPress: () => null },
-      ],
+      [{ text: 'Sim', onPress: () => handleRemoveTask(id) }, { text: 'Não' }],
     );
+  }
+
+  function handleEditTask({ taskId, taskNewTitle }: EditTaskArgs) {
+    const newTasks = [...tasks];
+    const taskToBeUpdated = newTasks.find((task) => task.id === taskId);
+
+    if (!taskToBeUpdated) return;
+
+    taskToBeUpdated.title = taskNewTitle;
+
+    setTasks(newTasks);
   }
 
   return (
@@ -55,6 +68,7 @@ export function Home() {
         tasks={tasks}
         toggleTaskDone={handleToggleTaskDone}
         removeTask={handleRemoveQuestion}
+        editTask={handleEditTask}
       />
     </View>
   );
